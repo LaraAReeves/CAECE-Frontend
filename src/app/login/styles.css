@@ -1,0 +1,8 @@
+:root {
+    --background: #ffffff;
+    --foreground: #0E6A73;
+  }
+
+#contenedor{
+    color: var(--foreground);
+}

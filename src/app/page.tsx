@@ -3,7 +3,6 @@ import logo from "./public/logo-ucaece-blanco.png";
 import Link from "next/link";
 
 export default function Home() {
-
   return (
     <div className="w-[100%] h-[60%] flex items-center justify-center flex-col p-6">
       <Image src={logo} alt="logo" width={500} className="mb-10" />

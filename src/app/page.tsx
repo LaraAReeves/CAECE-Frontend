@@ -10,7 +10,7 @@ export default function Home() {
         <button className="bg-foreground text-white p-6 px-10 rounded-3xl font-semibold"><Link href="/login">Inicia Sesión</Link></button> 
         <button className="text-foreground bg-white p-6 px-10 rounded-3xl font-semibold"><Link href="/registro">Registrate</Link></button>
       </div>
-      <p className="text-white font-semibold mt-auto">¡Informate sobre tus materias, aultas y profesores!</p>
+      <p className="text-white font-semibold mt-auto">¡Informate sobre tus materias, aulas y profesores!</p>
     </div>
   );
 }

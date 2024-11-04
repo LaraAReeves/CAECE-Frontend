@@ -8,11 +8,11 @@ import {EyeSlashFilledIcon} from "../ui/EyeSlashFilledIcon";
 import { MailIcon } from '../ui/MailIcon';
 import { UsernameIcon } from '../ui/UsernameIcon';
 import { PasswordIcon } from '../ui/PasswordIcon';
-import { login, register, State } from '../lib/actions';
+import { register, State } from '../lib/actions';
 
 export default function Page(){
     const [isVisible, setIsVisible] = useState(false);
-    const estadoInicial: State = { message: null, errors: {}, fields: {email:'', clave:'', nombreUsuario:''} };
+    const estadoInicial: State = { message: null, errors: {email:[], clave:[], nombreUsuario:[]}, fields: {email:'', clave:'', nombreUsuario:''} };
     const [state, formAction] = useActionState(register,estadoInicial);
     const toggleVisibility = () => setIsVisible(!isVisible);
     
@@ -23,7 +23,7 @@ export default function Page(){
             <form className='flex flex-col gap-3 md:w-[70%] w-[80%]' action={formAction}>
                 <div className='border-2 border-foreground rounded-full p-3 flex gap-2 items-center'>
                     <UsernameIcon className="size-6" />
-                    <input type="text" id="nombreUsuario" name="nombreUsuario" placeholder='Nombre completo' className='focus:outline-none' defaultValue={state.fields?.nombreCompleto} />
+                    <input type="text" id="nombreUsuario" name="nombreUsuario" placeholder='Nombre completo' className='focus:outline-none' defaultValue={state.fields?.nombreUsuario} />
                 </div>
                 {state.errors?.nombreUsuario &&
                     state.errors.nombreUsuario.map((error: string) => (

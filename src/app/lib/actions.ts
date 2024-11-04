@@ -7,6 +7,7 @@ export type State = {
   errors?: {
     email?: string[];
     clave?: string[];
+    nombreUsuario?: string[];
   };
   message?: string | null;
   fields?: {

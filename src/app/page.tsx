@@ -1,6 +1,8 @@
 import Image from "next/image";
 import logo from "./public/logo-ucaece-blanco.png";
 import Link from "next/link";
+import "./styles.css";
+
 
 export default function Home() {
   return (

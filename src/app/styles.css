@@ -1,0 +1,5 @@
+body{
+    background-image: url("public/login.jpg");
+    backdrop-filter: blur(2px);
+    background-size: cover;
+}

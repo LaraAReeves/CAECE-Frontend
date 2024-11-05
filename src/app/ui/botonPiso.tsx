@@ -9,7 +9,7 @@ export function BotonPiso({ children, className, ...rest }: ButtonProps) {
     <button
       {...rest}
       className={clsx(
-        'flex h-10 w-15 text-center items-center rounded-lg px-4 text-lg font-medium transition-colors hover:bg-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:opacity-50',
+        'flex h-10 w-15 text-center items-center rounded-lg px-4 text-lg font-medium transition-colors hover:bg-foreground hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:opacity-50',
         className,
       )}
     >

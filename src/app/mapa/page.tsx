@@ -2,50 +2,41 @@
 import Search from "../ui/search";
 import {BotonPiso} from "../ui/botonPiso";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
+
 import { useEffect, useState } from "react";
 import { IAula } from "../lib/IAula";
+
 import * as React from 'react'
 import Aula from "../ui/Aula";
 import ModalAula from "../ui/modalAula";
+import data from "../lib/data";
+
 export default function Mapa(){
     let cantPisos = 7;
-    // las aulas se deberian obtener a partir de un servicio que acceda al endpoint en el back
-    const aulasTotales = [
-        { id: 1, nombre: 'Aula 101', detalle: 'Departamento de IT', piso: 1, profesor: 'Juan Perez', edificio: 'A' },
-        { id: 2, nombre: 'Aula 102', detalle: 'Recursos Humanos', piso: 1, profesor: 'Juan Perez', edificio: 'A' }, 
-        { id: 4, nombre: 'Aula 103', detalle: 'Recursos Humanos', piso: 1, profesor: 'Juan Perez', edificio: 'A' }, 
-        { id: 6, nombre: 'Aula 104', detalle: 'Recursos Humanos', piso: 1, profesor: 'Juan Perez', edificio: 'A' },
-        { id: 8, nombre: 'Aula 301', detalle: 'Recursos Humanos', piso: 3, profesor: 'Juan Perez', edificio: 'A' }, 
-        { id: 3, nombre: 'Aula 401', detalle: 'Recursos Humanos', piso: 4, profesor: 'Juan Perez', edificio: 'A' }, 
-        { id: 5, nombre: 'Aula 202', detalle: 'Recursos Humanos', piso: 2, profesor: 'Juan Perez', edificio: 'A' }, 
-        { id: 7, nombre: 'Aula 701', detalle: 'Recursos Humanos', piso: 7, profesor: 'Juan Perez', edificio: 'A' } 
-      ]
+    const [aulas, setAulas] = useState<IAula[]>([]);
     const [pisoActual, setPisoActual] = useState(1);
-    const [aulas, setAulas] = useState<IAula[]>(aulasTotales.filter(aula => aula.piso === 1));
     const [modalAbierto, setModalAbierto] = useState(false);
     const [aulaSeleccionada, setAulaSeleccionada] = useState<IAula | null>(null);
+
     const searchParams = useSearchParams();
     
     useEffect(() => {
         const busqueda = searchParams.get('query');
-        if (busqueda) {
-            const aulaEncontrada = aulasTotales.find(aula => aula.nombre.includes(busqueda));
-            if (aulaEncontrada) {
-                setAulaSeleccionada(aulaEncontrada);
-                setPisoActual(aulaEncontrada?.piso || 0);
-                setAulas(aulasTotales.filter(aula => aula.piso === aulaEncontrada.piso))
+        data.get(busqueda!, pisoActual || 1).then((datos)=> { 
+            if(datos.length > 0){
+                setAulas(datos);
+                setPisoActual(datos[0].piso)
+            } 
+            else{
+                console.log("no hay datos");
             }
-        }
-        else{
-            setAulaSeleccionada(null);
-        }
-    }, [searchParams]);
+    });
+    }, [searchParams, pisoActual]);
     
     
     function cambiarPiso(idPiso:number){
         setPisoActual(idPiso);
-        setAulas(aulasTotales.filter(aula => aula.piso === idPiso));
-        //aca se debería llamar a la api con el id del piso
     }
 
     function handleClickAula(aula:IAula){
@@ -69,7 +60,72 @@ export default function Mapa(){
             </div>
         </div>
         {aulaSeleccionada && (
-            <ModalAula aula={aulaSeleccionada} abierto={modalAbierto}></ModalAula>
+            <Dialog open={modalAbierto} onClose={setModalAbierto} className="relative z-10">
+            <DialogBackdrop
+              transition
+              className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+            />
+      
+            <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+              <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <DialogPanel transition className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95">
+                  <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                    <div className="sm:flex sm:items-start">
+                      <div className="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10">
+                        {/* <ExclamationTriangleIcon aria-hidden="true" className="size-6 text-red-600" /> */}
+                        {aulaSeleccionada.nombre}
+
+                      </div>
+                      <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                        <DialogTitle as="h3" className="text-base font-semibold text-gray-900">
+                            {aulaSeleccionada.nombre}
+                        </DialogTitle>
+                        <div className="mt-2">
+                            {aulaSeleccionada.materias.map((materia) =>(
+                                  <>
+                                  <p key={materia.id} className="text-sm text-gray-500">{materia.nombre}</p>
+                                  <p key={materia.profesor} className="text-sm text-gray-500">{materia.profesor}</p>
+                                  {materia.horarios.map((horario)=>(
+                                    <>
+                                    <p className="text-sm text-gray-500">
+                                        {horario.diaSemana} de {horario.horaInicio} a {horario.horaFin}
+                                    </p>
+                                    </>
+                                  ))}
+                                  </>
+                            ))};
+                          <p className="text-sm text-gray-500">
+                            Piso: {aulaSeleccionada.piso}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Edificio: {aulaSeleccionada.edificio}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                    <button
+                      type="button"
+                      onClick={() => setModalAbierto(false)}
+                      className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                    >
+                      Cerrar
+                    </button> */}
+                    {/* <button
+                      type="button"
+                      data-autofocus
+                      onClick={() => setOpen(false)}
+                      className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                    >
+                      Cancel
+                    </button> */}
+                  {/* </div> */}
+                </DialogPanel>
+              </div>
+            </div>
+          </Dialog>
+            // <ModalAula aula={aulaSeleccionada} abierto={modalAbierto}></ModalAula>
         //     <div className='detalle m-6 p-6'>
         //     <h3>{aulaSeleccionada.nombre}</h3>
         //     <p>{aulaSeleccionada.detalle}</p>

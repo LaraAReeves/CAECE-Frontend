@@ -11,29 +11,60 @@ import * as React from 'react'
 import Aula from "../ui/Aula";
 import ModalAula from "../ui/modalAula";
 import data from "../lib/data";
+import Filtro from "../ui/filtroDiaSemana";
+import { set } from "zod";
 
 export default function Mapa(){
-    let cantPisos = 7;
+    const cantPisos = 7;
+    const searchParams = useSearchParams();
     const [aulas, setAulas] = useState<IAula[]>([]);
     const [pisoActual, setPisoActual] = useState(1);
     const [modalAbierto, setModalAbierto] = useState(false);
     const [aulaSeleccionada, setAulaSeleccionada] = useState<IAula | null>(null);
-
-    const searchParams = useSearchParams();
+    const [materias, setMaterias] = useState<string[]>([]);
+    const pathname = usePathname();
+    const { replace } = useRouter();
+   
     
-    useEffect(() => {
+    useEffect(() => {//problema cuando se deja de buscar y se quiere ver normal
         const busqueda = searchParams.get('query');
-        data.get(busqueda!, pisoActual || 1).then((datos)=> { 
-            if(datos.length > 0){
-                setAulas(datos);
-                setPisoActual(datos[0].piso)
-            } 
-            else{
-                console.log("no hay datos");
-            }
-    });
+        const dia = searchParams.get('dia');
+        if(busqueda){
+          data.buscarMateria(busqueda).then((datos)=> { 
+            setMaterias(datos);
+          });
+        }
+        else{
+          setAulaSeleccionada(null);
+          setMaterias([]);
+        }
+
+        data.getAulas(dia!).then((datos)=> { 
+          setAulas(datos.filter((aula)=> aula.piso == pisoActual));
+        })
     }, [searchParams, pisoActual]);
     
+    function buscarPorMateria(nombreMateria:string){
+      const params = new URLSearchParams(searchParams);
+      params.set('query',nombreMateria);
+      replace(`${pathname}?${params.toString()}`);
+      const dia = searchParams.get('dia');
+
+      data.get(nombreMateria, undefined, dia!).then((datos)=> { 
+        if(datos.length > 0){
+            setAulas(datos.filter((aula)=> aula.piso == pisoActual));
+            let aula:IAula = datos.find((aula) => aula.materias.find((materia) => materia.nombre == nombreMateria))!;
+            console.log("aula", datos);
+            if(aula){
+            setAulaSeleccionada(aula);
+            setPisoActual(aula.piso);
+            }
+        } 
+        else{
+            console.log("no hay datos");
+        }
+      });
+    }
     
     function cambiarPiso(idPiso:number){
         setPisoActual(idPiso);
@@ -46,9 +77,23 @@ export default function Mapa(){
 
     return(
         <>
-        <Search placeholder="Materia" />
-        <div className="flex flex-row justify-between w-screen px-5">
-            <div className="flex flex-row justify-between w-screen px-5 mt-10">
+        <div className="w-[100%] pl-4 flex items-baseline justify-start gap-5">
+          <div className="flex-col w-[50%] relative">
+            <Search placeholder="Materia"/>
+            {
+              searchParams.get('query') && (
+                <div className="border-b-2 border-foreground absolute w-[100%] z-10 p-5">
+                  {materias.length == 0 && (
+                    <p>No hay resultados</p>
+                  )}
+                 {materias.map((materia, index) => ( <p onClick={() => {buscarPorMateria(materia)}} key={index}>{materia}</p>))}
+                </div>
+              )}
+              </div>
+            <Filtro></Filtro>
+        </div>
+        <div className="flex flex-row justify-between w-screen px-5 m-auto">
+            <div className="flex flex-row w-screen px-5 mt-10 gap-2">
             {aulas.map((aula) => (
                 <Aula aula={aula} key={aula.id} onClick={() => handleClickAula(aula)} className={ aulaSeleccionada?.nombre == aula.nombre ? "border-foreground" : "box-border"}>{aula.nombre}</Aula>
             ))}
@@ -81,25 +126,27 @@ export default function Mapa(){
                             {aulaSeleccionada.nombre}
                         </DialogTitle>
                         <div className="mt-2">
+                            <p className="text-sm text-gray-500">
+                                Piso: {aulaSeleccionada.piso}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                                Edificio: {aulaSeleccionada.edificio}
+                            </p>
+                            <div className="mt-2">
                             {aulaSeleccionada.materias.map((materia) =>(
-                                  <>
-                                  <p key={materia.id} className="text-sm text-gray-500">{materia.nombre}</p>
-                                  <p key={materia.profesor} className="text-sm text-gray-500">{materia.profesor}</p>
-                                  {materia.horarios.map((horario)=>(
-                                    <>
-                                    <p className="text-sm text-gray-500">
-                                        {horario.diaSemana} de {horario.horaInicio} a {horario.horaFin}
-                                    </p>
-                                    </>
-                                  ))}
-                                  </>
-                            ))};
-                          <p className="text-sm text-gray-500">
-                            Piso: {aulaSeleccionada.piso}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Edificio: {aulaSeleccionada.edificio}
-                          </p>
+                                <div key={aulaSeleccionada.id} className="mt-2">
+                                    <p className="text-sm text-gray-500 font-semibold">{materia.nombre}</p>
+                                    <p className="text-sm text-gray-500"> Profesor/a: {materia.profesor}</p>
+                                    {materia.horarios.map((horario)=>(
+                                        <div key={horario.horaInicio}>
+                                            <p className="text-sm text-gray-500">
+                                                {horario.diaSemana} de {horario.horaInicio} a {horario.horaFin}
+                                            </p>
+                                        </div>  
+                                    ))}
+                                </div>
+                             ))}
+                         </div>
                         </div>
                       </div>
                     </div>

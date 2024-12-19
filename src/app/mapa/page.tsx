@@ -9,10 +9,8 @@ import { IAula } from "../lib/IAula";
 
 import * as React from 'react'
 import Aula from "../ui/Aula";
-import ModalAula from "../ui/modalAula";
 import data from "../lib/data";
 import Filtro from "../ui/filtroDiaSemana";
-import { set } from "zod";
 
 export default function Mapa(){
     const cantPisos = 7;
@@ -27,47 +25,39 @@ export default function Mapa(){
    
     
     useEffect(() => {//problema cuando se deja de buscar y se quiere ver normal
-        const busqueda = searchParams.get('query');
-        const dia = searchParams.get('dia');
-        if(busqueda){
-          data.buscarMateria(busqueda).then((datos)=> { 
-            setMaterias(datos);
-          });
-        }
-        else{
-          setAulaSeleccionada(null);
-          setMaterias([]);
-        }
-
-        data.getAulas(dia!).then((datos)=> { 
+      const busqueda = searchParams.get('query');
+      const dia = searchParams.get('dia');
+      if(busqueda){
+        data.buscarMateria(busqueda).then((datos)=> { 
+          setMaterias(datos);
+        });
+      }
+      else{
+        setAulaSeleccionada(null);
+        setMaterias([]);
+      }
+      data.get(searchParams.get("query")!, undefined, dia!).then((datos)=> { 
+        if(datos.length > 0){
           setAulas(datos.filter((aula)=> aula.piso == pisoActual));
-        })
+          let aula:IAula = datos.find((aula) => aula.materias.find((materia) => materia.nombre == searchParams.get("query")))!;
+          if(aula){
+            setAulaSeleccionada(aula);
+            setPisoActual(aula.piso);
+          }
+        }
+      });
+
+
     }, [searchParams, pisoActual]);
     
     function buscarPorMateria(nombreMateria:string){
       const params = new URLSearchParams(searchParams);
       params.set('query',nombreMateria);
-      replace(`${pathname}?${params.toString()}`);
-      const dia = searchParams.get('dia');
-
-      data.get(nombreMateria, undefined, dia!).then((datos)=> { 
-        if(datos.length > 0){
-            setAulas(datos.filter((aula)=> aula.piso == pisoActual));
-            let aula:IAula = datos.find((aula) => aula.materias.find((materia) => materia.nombre == nombreMateria))!;
-            console.log("aula", datos);
-            if(aula){
-            setAulaSeleccionada(aula);
-            setPisoActual(aula.piso);
-            }
-        } 
-        else{
-            console.log("no hay datos");
-        }
-      });
+      replace(`${pathname}?${params.toString()}`);     
     }
     
     function cambiarPiso(idPiso:number){
-        setPisoActual(idPiso);
+      setPisoActual(idPiso);
     }
 
     function handleClickAula(aula:IAula){
@@ -110,7 +100,6 @@ export default function Mapa(){
               transition
               className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
             />
-      
             <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
               <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                 <DialogPanel transition className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95">
@@ -134,7 +123,7 @@ export default function Mapa(){
                             </p>
                             <div className="mt-2">
                             {aulaSeleccionada.materias.map((materia) =>(
-                                <div key={aulaSeleccionada.id} className="mt-2">
+                                <div key={materia.id} className="mt-2">
                                     <p className="text-sm text-gray-500 font-semibold">{materia.nombre}</p>
                                     <p className="text-sm text-gray-500"> Profesor/a: {materia.profesor}</p>
                                     {materia.horarios.map((horario)=>(
@@ -151,36 +140,11 @@ export default function Mapa(){
                       </div>
                     </div>
                   </div>
-                  {/* <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                    <button
-                      type="button"
-                      onClick={() => setModalAbierto(false)}
-                      className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
-                    >
-                      Cerrar
-                    </button> */}
-                    {/* <button
-                      type="button"
-                      data-autofocus
-                      onClick={() => setOpen(false)}
-                      className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
-                    >
-                      Cancel
-                    </button> */}
-                  {/* </div> */}
                 </DialogPanel>
               </div>
             </div>
-          </Dialog>
-            // <ModalAula aula={aulaSeleccionada} abierto={modalAbierto}></ModalAula>
-        //     <div className='detalle m-6 p-6'>
-        //     <h3>{aulaSeleccionada.nombre}</h3>
-        //     <p>{aulaSeleccionada.detalle}</p>
-        //     <p>{aulaSeleccionada.piso}</p>
-        //     <p>{aulaSeleccionada.profesor}</p>
-        //   </div>
+          </Dialog> 
       )}
         </>
     )
-
 }

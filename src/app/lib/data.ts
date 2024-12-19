@@ -7,9 +7,19 @@ const aulas:IAula[] =  [
             nombre: "Calculo I",
             profesor:"Juan Gomez",
             horarios:[{
-                "diaSemana": "Lunes",
+                "diaSemana": "Miercoles",
                 "horaInicio":"18:30",
                 "horaFin":"22:30"
+            }]
+        },
+        {
+            id:4, 
+            nombre: "Matematica discreta",
+            profesor:"Juan Perez",
+            horarios:[{
+                "diaSemana": "Miercoles",
+                "horaInicio":"8:00",
+                "horaFin":"12:00"
             }]
         }
     ]},
@@ -32,49 +42,33 @@ const aulas:IAula[] =  [
     ] }, 
     { id: 7, nombre: 'P71', piso: 7, edificio: 'A', materias:[] } 
   ];
+
 const materias = ["Matematica discreta","Calculo I"];
 const data ={
     get:(query?:string, piso?:number, dia?:string):Promise<IAula[]> => {
-        let materias:IMateria[] = [];
-        let resultado = aulas;
+        let resultado:IAula[];
         if(query){
-            console.log(query);
-            resultado.forEach((aula) => {
-                materias = [];
-                aula.materias.forEach((materia) => {
-                    if(materia.nombre.toLowerCase().includes(query.toLowerCase()) && materia.horarios.find((horario) => horario.diaSemana == dia)){
-                        materias.push(materia);
-                    }
-                })
-                aula.materias = materias;
-            });
-            // resultado = resultado.filter((aula)=>{ // filtramos aulas que contengan el nombre de esa materia
-            //     aula.materias.filter((materia) => materia.nombre.toLowerCase().includes(query.toLowerCase()));
-            // });
-            console.log("resultado", resultado);
+            resultado = aulas.map(aula => ({...aula,
+                materias: aula.materias
+                    .filter(materia =>
+                        (!query || materia.nombre.toLowerCase().includes(query.toLowerCase())) && 
+                        (!dia || materia.horarios.some(horario => horario.diaSemana === dia))
+                    )
+            }));
         }
-        // else{
-        //     resultado = resultado.filter((aula)=> {
-        //         return aula.piso == piso;
-        //     });
-        // }
-        
+        else{
+            resultado = aulas.map(aula => ({
+                ...aula,
+                materias: aula.materias.map(materia => ({
+                    ...materia,
+                    horarios: materia.horarios.filter(horario => horario.diaSemana === dia)
+                })).filter(materia => materia.horarios.length > 0) // Filtra materias sin horarios válidos
+            }));
+        }
         return new Promise((resolve) => setTimeout(() => resolve(resultado),0));
     },
     buscarMateria:(busqueda:string): Promise<string[]> => {
         return new Promise((resolve) => setTimeout(() => resolve(materias.filter((materia)=>{ return materia.toLowerCase().includes(busqueda.toLowerCase())})),0));
-    },
-
-    getAulas:(dia: string): Promise<IAula[]> => {
-        // Copia profunda del array original para no modificarlo directamente
-        const resultado = aulas.map(aula => ({
-            ...aula,
-            materias: aula.materias.map(materia => ({
-                ...materia,
-                horarios: materia.horarios.filter(horario => horario.diaSemana === dia)
-            })).filter(materia => materia.horarios.length > 0) // Filtra materias sin horarios válidos
-        }));
-        return new Promise(resolve => setTimeout(() => resolve(resultado), 0));
     }
 }
 export default data;

@@ -13,33 +13,29 @@ export default function Filtro() {
     const { replace } = useRouter();
 
     useEffect(() => {
-      console.log("searchParams", diaElegido);
-        const params = new URLSearchParams(searchParams);
-        params.set('dia', diaElegido);
-        replace(`${pathname}?${params.toString()}`);
+      const params = new URLSearchParams(searchParams);
+      params.set('dia', diaElegido);
+      replace(`${pathname}?${params.toString()}`);
     }, [searchParams]);
 
     function filtrar(opcion: string) {
-        setDiaElegido(opcion);
-        const params = new URLSearchParams(searchParams);
-        console.log("opcion", opcion);
-        if (opcion) {
-          params.set('dia', opcion);
-        } else {
-          params.delete('dia');
-        }
-        replace(`${pathname}?${params.toString()}`);
+      setDiaElegido(opcion);
+      const params = new URLSearchParams(searchParams);
+      if (opcion) {
+        params.set('dia', opcion);
+      } else {
+        params.delete('dia');
+      }
+      replace(`${pathname}?${params.toString()}`);
     }
 
   return (
     <select value={diaElegido} className="p-2" onChange={(event) => {filtrar(event.target.value)}} > // para que no tome la primera opcion
         {/* <option> Filtrar por día </option> */}
-        {opciones.map((opcion) => (
-            <option key={opcion}> {opcion} </option>
-        ))}
+      {opciones.map((opcion) => (
+          <option key={opcion}> {opcion} </option>
+      ))}
     </select>
-           
-
   )
 }
 

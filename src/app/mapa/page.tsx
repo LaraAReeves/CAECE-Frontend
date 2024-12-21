@@ -11,6 +11,7 @@ import * as React from 'react'
 import Aula from "../ui/Aula";
 import data from "../lib/data";
 import Filtro from "../ui/filtroDiaSemana";
+import { IMateria } from "../lib/IMateria";
 
 export default function Mapa(){
     const cantPisos = 7;
@@ -20,16 +21,17 @@ export default function Mapa(){
     const [modalAbierto, setModalAbierto] = useState(false);
     const [aulaSeleccionada, setAulaSeleccionada] = useState<IAula | null>(null);
     const [edificio, setEdificio] = useState<string>("P");
-    const [materias, setMaterias] = useState<string[]>([]);
+    const [materias, setMaterias] = useState<IMateria[]>([]);
     const pathname = usePathname();
     const { replace } = useRouter();
    
     
     useEffect(() => {//problema cuando se deja de buscar y se quiere ver normal
-      const busqueda = searchParams.get('query');
+      const busquedaMateria = searchParams.get('materia');
+      const busquedaProfesor = searchParams.get('profesor');
       const dia = searchParams.get('dia');
-      if(busqueda){
-        data.buscarMateria(busqueda).then((datos)=> { 
+      if(busquedaMateria){
+        data.buscarMateria(busquedaMateria).then((datos)=> { 
           setMaterias(datos);
         });
       }
@@ -37,10 +39,10 @@ export default function Mapa(){
         setAulaSeleccionada(null);
         setMaterias([]);
       }
-      data.get(searchParams.get("query")!, undefined, dia!).then((datos)=> { 
+      data.get(busquedaMateria!,busquedaProfesor!, dia!).then((datos)=> { 
         if(datos.length > 0){
           setAulas(datos.filter((aula)=> aula.piso == pisoActual && aula.edificio == edificio));
-          let aula:IAula = datos.find((aula) => aula.materias.find((materia) => materia.nombre == searchParams.get("query")))!;
+          let aula:IAula = datos.find((aula) => aula.materias.find((materia) => materia.nombre == busquedaMateria && materia.profesor == busquedaProfesor))!;
           if(aula){
             setAulaSeleccionada(aula);
             setPisoActual(aula.piso);
@@ -52,9 +54,10 @@ export default function Mapa(){
 
     }, [searchParams, pisoActual, edificio]);
     
-    function buscarPorMateria(nombreMateria:string){
+    function buscarPorMateria(nombreMateria:string, profesor:string){
       const params = new URLSearchParams(searchParams);
-      params.set('query',nombreMateria);
+      params.set('materia',nombreMateria);
+      params.set('profesor',profesor);
       replace(`${pathname}?${params.toString()}`);     
     }
     
@@ -64,6 +67,10 @@ export default function Mapa(){
 
     function cambiarEdificio(edificio:string){
       setEdificio(edificio);
+      const params = new URLSearchParams();
+      // params.set('query',nombreMateria);
+      replace(`${pathname}?${params.toString()}`);     
+      console.log(edificio);
     }
 
     function handleClickAula(aula:IAula){
@@ -75,14 +82,14 @@ export default function Mapa(){
         <>
         <div className="w-[100%] pl-4 flex items-baseline justify-start gap-5">
           <div className="flex-col w-[50%] relative">
-            <Search placeholder="Materia"/>
+            <Search placeholder="Materia o profesor"/>
             {
-              searchParams.get('query') && (
+              searchParams.get('materia') && (
                 <div className="border-b-2 border-foreground absolute w-[100%] z-10 p-5">
                   {materias.length == 0 && (
                     <p>No hay resultados</p>
                   )}
-                 {materias.map((materia, index) => ( <p onClick={() => {buscarPorMateria(materia)}} key={index}>{materia}</p>))}
+                 {materias.map((materia, index) => ( <p onClick={() => {buscarPorMateria(materia.nombre, materia.profesor)}} key={index}>{materia.nombre}  -  {materia.profesor}</p>))}
                 </div>
               )}
               </div>

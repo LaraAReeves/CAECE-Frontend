@@ -48,16 +48,20 @@ const aulas:IAula[] =  [
 
   ];
 
-const materias = ["Matematica discreta","Calculo I"];
+const materias: IMateria[] = [
+    { id: 1, nombre: "Matematica discreta", profesor: "Juan Perez", horarios: [] },
+    { id: 2, nombre: "Calculo I", profesor: "Juan Gomez", horarios: [] }
+];
 const data ={
-    get:(query?:string, piso?:number, dia?:string):Promise<IAula[]> => {
+    get:(query?:string, profesor?:string, dia?:string):Promise<IAula[]> => {
         let resultado:IAula[];
         if(query){
             resultado = aulas.map(aula => ({...aula,
                 materias: aula.materias
                     .filter(materia =>
                         (!query || materia.nombre.toLowerCase().includes(query.toLowerCase())) && 
-                        (!dia || materia.horarios.some(horario => horario.diaSemana === dia))
+                        (!dia || materia.horarios.some(horario => horario.diaSemana === dia)) &&
+                        (!profesor || materia.profesor.toLowerCase().includes(profesor.toLowerCase()) )
                     )
             }));
         }
@@ -72,8 +76,8 @@ const data ={
         }
         return new Promise((resolve) => setTimeout(() => resolve(resultado),0));
     },
-    buscarMateria:(busqueda:string): Promise<string[]> => {
-        return new Promise((resolve) => setTimeout(() => resolve(materias.filter((materia)=>{ return materia.toLowerCase().includes(busqueda.toLowerCase())})),0));
+    buscarMateria:(busqueda:string): Promise<IMateria[]> => {
+        return new Promise((resolve) => setTimeout(() => resolve(materias.filter((materia)=>{ return materia.nombre.toLowerCase().includes(busqueda.toLowerCase()) || materia.profesor.toLowerCase().includes(busqueda.toLowerCase())})),0));
     }
 }
 export default data;

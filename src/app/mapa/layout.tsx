@@ -1,5 +1,6 @@
 import Navbar from '@/app/ui/navBar';
 import { Metadata } from 'next';
+import './styles.css';
 export const experimental_ppr = true;
 export const metadata: Metadata = {
   title: "Universidad CAECE - Mapa",

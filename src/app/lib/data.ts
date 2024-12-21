@@ -1,7 +1,7 @@
 import { IAula } from "./IAula"
 import { IMateria } from "./IMateria";
 const aulas:IAula[] =  [
-    { id: 1, nombre: 'P11', piso: 1, edificio: 'A', materias:[  
+    { id: 1, nombre: 'P11', piso: 1, edificio: 'P', materias:[  
         {
             id:2, 
             nombre: "Calculo I",
@@ -23,12 +23,12 @@ const aulas:IAula[] =  [
             }]
         }
     ]},
-    { id: 2, nombre: 'P12', piso: 1, edificio: 'A',materias:[ ]}, 
-    { id: 4, nombre: 'P13', piso: 1, edificio: 'A',materias:[]}, 
-    { id: 6, nombre: 'P14', piso: 1, edificio: 'A', materias:[] },
-    { id: 8, nombre: 'P31', piso: 3, edificio: 'A', materias:[] }, 
-    { id: 3, nombre: 'P41', piso: 4, edificio: 'A', materias:[] }, 
-    { id: 5, nombre: 'P22', piso: 2, edificio: 'A', materias:[
+    { id: 2, nombre: 'P12', piso: 1, edificio: 'P',materias:[ ]}, 
+    { id: 4, nombre: 'P13', piso: 1, edificio: 'P',materias:[]}, 
+    { id: 6, nombre: 'P14', piso: 1, edificio: 'P', materias:[] },
+    { id: 8, nombre: 'P31', piso: 3, edificio: 'P', materias:[] }, 
+    { id: 3, nombre: 'P41', piso: 4, edificio: 'P', materias:[] }, 
+    { id: 5, nombre: 'P22', piso: 2, edificio: 'H', materias:[
         {
             id:1, 
             nombre: "Matematica discreta",
@@ -40,7 +40,12 @@ const aulas:IAula[] =  [
             }]
         }
     ] }, 
-    { id: 7, nombre: 'P71', piso: 7, edificio: 'A', materias:[] } 
+    { id: 9, nombre: 'P11', piso: 1, edificio: 'H', materias:[] },
+    { id: 10, nombre: 'P12', piso: 1, edificio: 'H', materias:[] },
+    { id: 11, nombre: 'P13', piso: 1, edificio: 'H', materias:[] },
+    { id: 12, nombre: 'P14', piso: 1, edificio: 'H', materias:[] } 
+
+
   ];
 
 const materias = ["Matematica discreta","Calculo I"];

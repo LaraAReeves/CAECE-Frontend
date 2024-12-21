@@ -19,6 +19,7 @@ export default function Mapa(){
     const [pisoActual, setPisoActual] = useState(1);
     const [modalAbierto, setModalAbierto] = useState(false);
     const [aulaSeleccionada, setAulaSeleccionada] = useState<IAula | null>(null);
+    const [edificio, setEdificio] = useState<string>("P");
     const [materias, setMaterias] = useState<string[]>([]);
     const pathname = usePathname();
     const { replace } = useRouter();
@@ -38,17 +39,18 @@ export default function Mapa(){
       }
       data.get(searchParams.get("query")!, undefined, dia!).then((datos)=> { 
         if(datos.length > 0){
-          setAulas(datos.filter((aula)=> aula.piso == pisoActual));
+          setAulas(datos.filter((aula)=> aula.piso == pisoActual && aula.edificio == edificio));
           let aula:IAula = datos.find((aula) => aula.materias.find((materia) => materia.nombre == searchParams.get("query")))!;
           if(aula){
             setAulaSeleccionada(aula);
             setPisoActual(aula.piso);
+            setEdificio(aula.edificio);
           }
         }
       });
 
 
-    }, [searchParams, pisoActual]);
+    }, [searchParams, pisoActual, edificio]);
     
     function buscarPorMateria(nombreMateria:string){
       const params = new URLSearchParams(searchParams);
@@ -58,6 +60,10 @@ export default function Mapa(){
     
     function cambiarPiso(idPiso:number){
       setPisoActual(idPiso);
+    }
+
+    function cambiarEdificio(edificio:string){
+      setEdificio(edificio);
     }
 
     function handleClickAula(aula:IAula){
@@ -81,6 +87,11 @@ export default function Mapa(){
               )}
               </div>
             <Filtro></Filtro>
+            <div className="flex flex-row gap-0 bg-foreground text-white">
+              <button onClick={() => cambiarEdificio('P')} className={"p-2 " + (edificio == 'P' ? 'bg-foreground text-white' : 'bg-slate-300 text-black')}>P</button>
+              <button onClick={() => cambiarEdificio('H')} className={"p-2 " + (edificio == 'H' ? 'bg-foreground text-white' : 'bg-slate-300 text-black')} >H</button>
+            </div>
+            
         </div>
         <div className="flex flex-row justify-between w-screen px-5 m-auto">
             <div className="flex flex-row w-screen px-5 mt-10 gap-2">

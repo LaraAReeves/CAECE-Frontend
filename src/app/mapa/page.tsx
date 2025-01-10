@@ -2,10 +2,10 @@
 import Search from "../ui/search";
 import {BotonPiso} from "../ui/botonPiso";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { useEffect, useState } from "react";
 import { IAula } from "../lib/IAula";
-
+import Image from "next/image";
+import ascensor from "../public/ascensor.png";
 import * as React from 'react'
 import Aula from "../ui/Aula";
 import data from "../lib/data";
@@ -50,15 +50,13 @@ export default function Mapa(){
           }
         }
       });
-
-
     }, [searchParams, pisoActual, edificio]);
     
     function buscarPorMateria(nombreMateria:string, profesor:string){
       const params = new URLSearchParams(searchParams);
       params.set('materia',nombreMateria);
       params.set('profesor',profesor);
-      replace(`${pathname}?${params.toString()}`);     
+      replace(`${pathname}?${params.toString()}`);  
     }
     
     function cambiarPiso(idPiso:number){
@@ -80,12 +78,12 @@ export default function Mapa(){
 
     return(
         <>
-        <div className="w-[100%] p-4 flex items-baseline justify-start gap-5">
+        <div className="w-[100%] p-4 flex flex-col md:flex-row items-baseline justify-start gap-5 ">
           <div className="flex-col md:w-[50%] w-[100%] relative">
             <Search placeholder="Materia o profesor"/>
             {
               searchParams.get('materia') && (
-                <div className="border-b-2 border-foreground absolute w-[100%] z-10 p-5">
+                <div className="border-b-2 border-foreground absolute w-[100%] z-10 p-5 bg-white">
                   {materias.length == 0 && (
                     <p>No hay resultados</p>
                   )}
@@ -101,20 +99,34 @@ export default function Mapa(){
             
         </div>
         <div className="flex flex-row justify-between w-screen px-5 m-auto">
-          {/* <div className="flex flex-row px-5 mt-10 gap-2"> */}
-            {/* <Aula aula={aulas[0]} onClick={() => handleClickAula(aulas[0])} className={ aulaSeleccionada?.nombre == aulas[0].nombre ? "border-foreground" : "box-border"}>{aulas[0].nombre}</Aula> */}
+          { edificio == 'P' && (
+            <>
+            <div className="flex items-center text-right text-xs -rotate-90">
+              Av. de Mayo
+            </div>
             <div className="px-5 mt-10 gap-2 contenedorAulas w-[100%]">
-            {aulas.map((aula) => (
-                <Aula aula={aula} indice={aulas.indexOf(aula)} key={aula.id} onClick={() => handleClickAula(aula)} className={ aulaSeleccionada?.nombre == aula.nombre ? "border-foreground" : "box-border"}><p>{aula.nombre}</p></Aula>
-            ))}
-            </div>
-            {/* </div> */}
-            <div className="flex flex-col gap-10 justify-center text-center mt-10">
+              {aulas.map((aula) => (
+                <Aula aula={aula} indice={aulas.indexOf(aula)} key={aula.id} onClick={() => handleClickAula(aula)} className={aulaSeleccionada?.nombre == aula.nombre ? "border-foreground" : "box-border"}><p>{aula.nombre}</p></Aula>
+              ))}
+              <Image src={ascensor} alt={""} width={50}/>
+              <Image src={ascensor} alt={""} width={50}/>
+
+            </div></>
+          )
+          }
+          {edificio == "H" && (
+            <><div className="px-5 mt-10 gap-2 contenedorAulas w-[100%]">
+              {aulas.map((aula) => (
+                <Aula aula={aula} indice={aulas.indexOf(aula)} key={aula.id} onClick={() => handleClickAula(aula)} className={aulaSeleccionada?.nombre == aula.nombre ? "border-foreground" : "box-border"}><p>{aula.nombre}</p></Aula>
+              ))}
+            </div></>
+          )}
+          <div className="flex flex-col gap-10 justify-center text-center mt-10 mb-10">
                 {Array.from({ length: cantPisos }, (_, i) => (
-                    <BotonPiso key={i + 1} onClick={() => cambiarPiso(i + 1)} className={pisoActual == (i + 1) ? 'bg-foreground text-white' : 'bg-slate-300 text-black'}>{i + 1}</BotonPiso>
+                  <BotonPiso key={i + 1} onClick={() => cambiarPiso(i + 1)} className={pisoActual == (i + 1) ? 'bg-foreground text-white' : 'bg-slate-300 text-black'}>{i + 1}</BotonPiso>
                 ))}
-            </div>
-        </div>
+              </div>
+          </div>
         {aulaSeleccionada && (
           <ModalAula aulaSeleccionada={aulaSeleccionada} open={modalAbierto} onClose={setModalAbierto}></ModalAula>
       )}

@@ -1,13 +1,13 @@
 import { IAula } from "./IAula"
 import { IMateria } from "./IMateria";
 const aulas:IAula[] =  [
-    { id: 1, nombre: 'P11', piso: 1, edificio: 'P', materias:[  
+    { id: 1, nombre: 'P11', piso: 1, edificio: 'H', materias:[  
         {
             id:2, 
             nombre: "Calculo I",
             profesor:"Juan Gomez",
             horarios:[{
-                "diaSemana": "Miercoles",
+                "diaSemana": "Viernes",
                 "horaInicio":"18:30",
                 "horaFin":"22:30"
             }]
@@ -15,9 +15,9 @@ const aulas:IAula[] =  [
         {
             id:4, 
             nombre: "Matematica discreta",
-            profesor:"Juan Perez",
+            profesor:"Alfredo Perez",
             horarios:[{
-                "diaSemana": "Miercoles",
+                "diaSemana": "Viernes",
                 "horaInicio":"8:00",
                 "horaFin":"12:00"
             }]
@@ -34,13 +34,13 @@ const aulas:IAula[] =  [
             nombre: "Matematica discreta",
             profesor:"Juan Perez",
             horarios:[{
-                "diaSemana": "Martes",
+                "diaSemana": "Sabado",
                 "horaInicio":"8:00",
                 "horaFin":"12:00"
             }]
         }
     ] }, 
-    { id: 9, nombre: 'P11', piso: 1, edificio: 'H', materias:[] },
+    { id: 9, nombre: 'P11', piso: 1, edificio: 'P', materias:[] },
     { id: 10, nombre: 'P12', piso: 1, edificio: 'H', materias:[] },
     { id: 11, nombre: 'P13', piso: 1, edificio: 'H', materias:[] },
     { id: 12, nombre: 'P14', piso: 1, edificio: 'H', materias:[] } 

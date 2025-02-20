@@ -17,7 +17,7 @@ export default function Mapa(){
     const cantPisos = 7;
     const searchParams = useSearchParams();
     const [aulas, setAulas] = useState<IAula[]>([]);
-    const [pisoActual, setPisoActual] = useState(1);
+    const [pisoActual, setPisoActual] = useState(0);
     const [modalAbierto, setModalAbierto] = useState(false);
     const [aulaSeleccionada, setAulaSeleccionada] = useState<IAula | null>(null);
     const [edificio, setEdificio] = useState<string>("P");
@@ -96,32 +96,71 @@ export default function Mapa(){
               <button onClick={() => cambiarEdificio('P')} className={"p-2 " + (edificio == 'P' ? 'bg-foreground text-white' : 'bg-slate-300 text-black')}>P</button>
               <button onClick={() => cambiarEdificio('H')} className={"p-2 " + (edificio == 'H' ? 'bg-foreground text-white' : 'bg-slate-300 text-black')} >H</button>
             </div>
-            
         </div>
+        <div className="text-xl font-semibold pb-5"> 
+          {pisoActual == 0 ? (<><h1>Planta baja</h1></>):(<><h1>Piso {pisoActual}</h1></>)}
+          </div>
+
         <div className="flex flex-row justify-between w-screen px-5 m-auto">
-          { edificio == 'P' && (
-            <>
-            <div className="flex items-center text-right text-xs -rotate-90">
-              Av. de Mayo
+          {pisoActual == 0 && (
+            <div className="flex flex-col  m-auto mt-0 w-[80%]">
+              <div className="grid grid-cols-3 grid-rows-3 w-[100%]">
+                <div className="row-start-1 row-end-1">
+                  Ascensores Hirigoyen
+                  <Image src={ascensor} alt={""} width={50} className="ascensor"/>
+                </div>
+                <div className="row-start-2">
+                  Escaleras
+                  <Image src={ascensor} alt={""} width={50} className="ascensor"/>
+                </div>
+                <div className="row-start-3">
+                  Ascensores Piedras
+                  <Image src={ascensor} alt={""} width={50} className="ascensor"/>
+                </div>
+                <div className="text-center row-start-1 row-end-1 col-start-3 col-end-3 border-2 border-foreground leading-[8]">informes</div>
+                <div className="text-center row-start-1 row-span-3 col-span-2 col-start-2 border-2 border-foreground leading-[24]">
+                  Espacio de estudio
+                </div>
+              </div>
+              <div className="flex flex-col items-center mt-10">
+                Acceso por molinetes
+                <div className="flex justify-between w-[100%] mt-2">
+                  <Image src={ascensor} alt={""} width={50} className="ascensor"/>
+                  <Image src={ascensor} alt={""} width={50} className="ascensor"/>
+                  <Image src={ascensor} alt={""} width={50} className="ascensor"/>
+                </div>
+              </div>
             </div>
-            <div className="px-5 mt-10 gap-2 contenedorAulas w-[100%]">
+
+          )}
+          {pisoActual != 0  &&  (edificio == 'P' ? (
+            <>
+            <div className="mt-10 gap-2 contenedorAulas w-[100%] relative">
+              <div className="ascensores">
+                <Image src={ascensor} alt={""} width={50} className="ascensor"/>
+                <Image src={ascensor} alt={""} width={50} className="ascensor"/>
+              </div>
               {aulas.map((aula) => (
                 <Aula aula={aula} indice={aulas.indexOf(aula)} key={aula.id} onClick={() => handleClickAula(aula)} className={aulaSeleccionada?.nombre == aula.nombre ? "border-foreground" : "box-border"}><p>{aula.nombre}</p></Aula>
               ))}
-              <Image src={ascensor} alt={""} width={50}/>
-              <Image src={ascensor} alt={""} width={50}/>
-
-            </div></>
-          )
-          }
-          {edificio == "H" && (
+              <p className="absolute text-xs -rotate-90 right-0">
+              Av. de Mayo
+            </p>
+            </div>
+          
+            </>
+          ):(
             <><div className="px-5 mt-10 gap-2 contenedorAulas w-[100%]">
               {aulas.map((aula) => (
                 <Aula aula={aula} indice={aulas.indexOf(aula)} key={aula.id} onClick={() => handleClickAula(aula)} className={aulaSeleccionada?.nombre == aula.nombre ? "border-foreground" : "box-border"}><p>{aula.nombre}</p></Aula>
               ))}
             </div></>
-          )}
-          <div className="flex flex-col gap-10 justify-center text-center mt-10 mb-10">
+          ))}
+          
+        
+          <div className="flex flex-col gap-5 justify-center text-center mt-10 mb-10">
+                <BotonPiso key={0} onClick={() => cambiarPiso(0)} className={pisoActual == (0) ? 'bg-foreground text-white' : 'bg-slate-300 text-black'}>PB</BotonPiso>
+
                 {Array.from({ length: cantPisos }, (_, i) => (
                   <BotonPiso key={i + 1} onClick={() => cambiarPiso(i + 1)} className={pisoActual == (i + 1) ? 'bg-foreground text-white' : 'bg-slate-300 text-black'}>{i + 1}</BotonPiso>
                 ))}

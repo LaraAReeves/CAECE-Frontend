@@ -7,7 +7,7 @@ const aulas:IAula[] =  [
             nombre: "Calculo I",
             profesor:"Juan Gomez",
             horarios:[{
-                "diaSemana": "Viernes",
+                "diaSemana": "Jueves",
                 "horaInicio":"18:30",
                 "horaFin":"22:30"
             }]

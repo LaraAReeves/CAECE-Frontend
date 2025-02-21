@@ -23,9 +23,11 @@ const aulas:IAula[] =  [
             }]
         }
     ]},
+    { id: 9, nombre: 'P11', piso: 1, edificio: 'P', materias:[] },
     { id: 2, nombre: 'P12', piso: 1, edificio: 'P',materias:[ ]}, 
     { id: 4, nombre: 'P13', piso: 1, edificio: 'P',materias:[]}, 
     { id: 6, nombre: 'P14', piso: 1, edificio: 'P', materias:[] },
+    { id: 7, nombre: 'P15', piso: 1, edificio: 'P', materias:[] },
     { id: 8, nombre: 'P31', piso: 3, edificio: 'P', materias:[] }, 
     { id: 3, nombre: 'P41', piso: 4, edificio: 'P', materias:[] }, 
     { id: 5, nombre: 'P22', piso: 2, edificio: 'H', materias:[
@@ -40,7 +42,6 @@ const aulas:IAula[] =  [
             }]
         }
     ] }, 
-    { id: 9, nombre: 'P11', piso: 1, edificio: 'P', materias:[] },
     { id: 10, nombre: 'P12', piso: 1, edificio: 'H', materias:[] },
     { id: 11, nombre: 'P13', piso: 1, edificio: 'H', materias:[] },
     { id: 12, nombre: 'P14', piso: 1, edificio: 'H', materias:[] } 

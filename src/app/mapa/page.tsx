@@ -106,7 +106,7 @@ export default function Mapa(){
             <div className="flex flex-col  m-auto mt-0 w-[80%]">
               <div className="grid grid-cols-3 grid-rows-3 w-[100%]">
                 <div className="row-start-1 row-end-1">
-                  Ascensores Hirigoyen
+                  Ascensores Yrigoyen
                   <Image src={ascensor} alt={""} width={50} className="ascensor"/>
                 </div>
                 <div className="row-start-2">
@@ -143,7 +143,7 @@ export default function Mapa(){
               {aulas.map((aula) => (
                 <Aula aula={aula} indice={aulas.indexOf(aula)} key={aula.id} onClick={() => handleClickAula(aula)} className={aulaSeleccionada?.nombre == aula.nombre ? "border-foreground" : "box-border"}><p>{aula.nombre}</p></Aula>
               ))}
-              <p className="absolute text-xs -rotate-90 right-0">
+              <p className="absolute text-xs -rotate-90 -right-10 bottom-[50%] top-[50%]">
               Av. de Mayo
             </p>
             </div>
